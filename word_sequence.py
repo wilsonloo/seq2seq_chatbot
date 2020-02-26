@@ -14,8 +14,8 @@ class WordSequence(object):
     END=3
     word_dict={}
     def __init__(self,
-                # word_vec_dic='sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5', #百度百科中文词向量  https://github.com/Embedding/Chinese-Word-Vectors
-                # embedding_dim=300
+                word_vec_dic='sgns.target.word-word.dynwin5.thr10.neg5.dim300.iter5', #百度百科中文词向量  https://github.com/Embedding/Chinese-Word-Vectors
+                embedding_dim=300
                 ):
         #初始化字典
         self.word_dict={
@@ -26,7 +26,7 @@ class WordSequence(object):
         }
         self.fited=False
         self.word_vec_dic=word_vec_dic
-        # self.embedding_dim=embedding_dim
+        self.embedding_dim=embedding_dim
         
         
     def to_index(self,word):

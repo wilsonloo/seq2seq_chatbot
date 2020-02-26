@@ -25,7 +25,10 @@ def regular(sen):
 
     return sen
 
-def main(limit=20,x_limit=3,y_limit=6):
+def checkLimit(x, y, limit, x_limit, y_limit):
+    return len(x) < limit and len(y) < limit and len(y)>=y_limit and len(x)>=x_limit
+
+def main(limit=20, x_limit=3,y_limit=6):
     print("extract lines")
 
     fp = open("./data/dgk_shooter_min.conv",'r',encoding='utf-8')
@@ -73,25 +76,38 @@ def main(limit=20,x_limit=3,y_limit=6):
                     next_next_line=None
             
             if next_line:
-                x_data.append(line)
-                y_data.append(next_line)
+                if checkLimit(line, next_line, limit, x_limit, y_limit):
+                    x_data.append(line)
+                    y_data.append(next_line)
+            
             if last_line and next_line:
-                x_data.append(last_line + make_split(last_line) + line)
-                y_data.append(next_line)
+                a = last_line + make_split(last_line) + line
+                b = next_line
+                if checkLimit(a, b, limit, x_limit, y_limit):
+                    x_data.append(a)
+                    y_data.append(b)
+            
             if next_line and next_next_line:
-                x_data.append(line)
-                y_data.append(next_line + make_split(next_line) + next_next_line)
+                a = line
+                b = next_line + make_split(next_line) + next_next_line
+                if checkLimit(a, b, limit, x_limit, y_limit):
+                    x_data.append(a)
+                    y_data.append(b)
     
-    print(len(x_data),len(y_data))
+    x_len = len(x_data)
+    y_len = len(y_data)
+    print(x_len, y_len)
 
     for ask,answer in zip(x_data[:20],y_data[:20]):
         print(''.join(ask))
         print(''.join(answer))
         print('-'*20)
 
-
-    
+    """
+    print("listing zip...")
     data = list(zip(x_data,y_data))
+
+    print("fixing data...")
     data = [
         (x,y)
         for x,y in data
@@ -101,9 +117,26 @@ def main(limit=20,x_limit=3,y_limit=6):
         and len(x)>=x_limit
 
     ]
-    x_data,y_data=zip(*data)
 
-    print('fit word_sequence')
+    print("rezipping data...")
+    x_data,y_data=zip(*data)
+    """
+
+    """
+    print('fit word_sequence...')
+    for k in tqdm(range(x_len-1, -1, -1)):
+        x = x_data[k]
+        y = y_data[k]
+        xLen = len(x)
+        yLen = len(y)
+        if not (xLen < limit and yLen < limit and yLen >= y_limit and xLen >= x_limit):
+            old = id(x_data)
+            x_data.remove(x)
+            y_data.remove(y)
+            print("elem removed, x_data address delta:", old, id(x_data))
+    """
+
+    print('fit word_sequence..done')
 
     ws_input = WordSequence()
     ws_input.fit(x_data + y_data)
